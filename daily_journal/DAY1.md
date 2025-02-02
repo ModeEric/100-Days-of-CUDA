@@ -1,0 +1,1 @@
+Today I learned CUDA by trying to implement a parallel vector addition method. I learned some of the syntax behind cudaMalloc and cudaMemcpy, what a grid, block, and thread is, and implemented the vector addition method. I also updated my C installations and updated my CUDA drivers to 12.6
