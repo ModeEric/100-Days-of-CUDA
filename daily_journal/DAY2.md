@@ -1,0 +1,1 @@
+Fixing vector add with synchronization. Nuking my dev environemnt and starting over due to issues with Clang and CUDA versions
