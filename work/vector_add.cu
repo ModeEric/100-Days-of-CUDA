@@ -32,9 +32,10 @@ int main(){
     int threadsPerBlock = 256;
     int blocksPerGrid = (N+threadsPerBlock -1 )/threadsPerBlock;
 
-    vectorAdd<<<threadsPerBlock,blocksPerGrid>>>(d_A,d_B,d_C,N);
+    vectorAdd<<<blocksPerGrid,threadsPerBlock>>>(d_A,d_B,d_C,N);
 
     cudaMemcpy(C,d_C,sizeN,cudaMemcpyDeviceToHost);
+    cudaDeviceSynchronize();
 
 
     for (int i=0;i<10;i++){
