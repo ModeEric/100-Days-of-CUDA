@@ -34,8 +34,8 @@ int main(){
 
     vectorAdd<<<blocksPerGrid,threadsPerBlock>>>(d_A,d_B,d_C,N);
 
-    cudaMemcpy(C,d_C,sizeN,cudaMemcpyDeviceToHost);
     cudaDeviceSynchronize();
+    cudaMemcpy(C,d_C,sizeN,cudaMemcpyDeviceToHost);
 
 
     for (int i=0;i<10;i++){
