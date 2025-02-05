@@ -1,0 +1,1 @@
+Writing a draft for CUDA implementation of conway's game of life. learning to code without any external help so quite a few mistakes, but improving iteratively.
