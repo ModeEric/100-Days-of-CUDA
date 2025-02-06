@@ -50,7 +50,7 @@ int main(){
 
     int blockNum = 16;
     int threadNum = 256
-    conway_game_simple(current_C,grid_C);
+    conway_game_simple<<<blockNum,threadNum>>>(current_C,grid_C);
 
     cudaDeviceSynchronize();
 
