@@ -1,0 +1,1 @@
+Minimal changes with conway's game of life for small daily effort.

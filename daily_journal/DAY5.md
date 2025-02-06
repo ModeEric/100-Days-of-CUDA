@@ -1,0 +1,1 @@
+Fixing Conway's game of life implementation completely. Major changes, including understanding how to use dim3 (multidimensional threads, syntax errors, indexing with one pair of brackets), etc.
