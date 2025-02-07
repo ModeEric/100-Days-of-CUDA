@@ -1,0 +1,1 @@
+Learning error logging, updating print skills. This is not my main priority at the moment

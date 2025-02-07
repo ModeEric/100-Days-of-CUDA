@@ -6,7 +6,7 @@
 #define GRID_WIDTH 32
 #define GRID_HEIGHT 32
 
-__global__ void conway_game_simple(char* current, char* next){
+__global__ void conway_game_simple(unsigned char* current, unsigned char* next){
     int x = blockDim.x*blockIdx.x + threadIdx.x;
     int y = blockDim.y*blockIdx.y + threadIdx.y;
     if (x<GRID_WIDTH && y<GRID_HEIGHT){
@@ -16,21 +16,21 @@ __global__ void conway_game_simple(char* current, char* next){
                 int nx = x+i;
                 int ny = y+j;
                 if (nx<GRID_WIDTH && ny<GRID_HEIGHT && nx>=0 && ny>=0){
-                    liveNeighbors+=current[nx*GRID_WIDTH+ny];
+                    liveNeighbors+=current[ny*GRID_WIDTH+nx];
                 }
             }
         }
-        char cell = current[x*GRID_WIDTH+y];
+        char cell = current[y*GRID_WIDTH+x];
         liveNeighbors-=cell;
 
         if(cell==1 && (liveNeighbors==2 || liveNeighbors==3)){
-            next[x*GRID_WIDTH+y]= 1;
+            next[y*GRID_WIDTH+x]= 1;
         }
         else{
-            next[x*GRID_WIDTH+y]=0;
+            next[y*GRID_WIDTH+x]=0;
         }
         if(cell==0 && liveNeighbors==3){
-            next[x*GRID_WIDTH+y]=1;
+            next[y*GRID_WIDTH+x]=1;
         }
     }
 }
@@ -38,10 +38,10 @@ __global__ void conway_game_simple(char* current, char* next){
 
 int main(){
     int sizeN =sizeof(char)*GRID_HEIGHT*GRID_WIDTH;
-    char* grid = malloc(sizeN);
-    char* current = malloc(sizeN);
-    char* grid_C;
-    char* current_C;
+    unsigned char* grid = (unsigned char*)malloc(sizeN);
+    unsigned char* current = (unsigned char*)malloc(sizeN);
+    unsigned char* grid_C;
+    unsigned char* current_C;
 
     cudaMalloc((void**)&grid_C,sizeN);
     cudaMalloc((void**)&current_C,sizeN);
@@ -58,7 +58,10 @@ int main(){
     dim3 threadsPerBlock(16,16);
     dim3 numBlocks((GRID_WIDTH+threadsPerBlock.x-1)/threadsPerBlock.x,(GRID_WIDTH+threadsPerBlock.y-1)/threadsPerBlock.y);
     conway_game_simple<<<numBlocks,threadsPerBlock>>>(current_C,grid_C);
-
+    cudaError_t cudErr = cudaGetLastError();
+    if (cudErr!=cudaSuccess){
+        printf("Cuda error: %s",cudErr)
+    }
     cudaDeviceSynchronize();
 
     cudaMemcpy(grid,grid_C,sizeN,cudaMemcpyDeviceToHost);
@@ -66,6 +69,7 @@ int main(){
         for(int j=0;j<10;j++){
             printf("%d ",grid[i*GRID_WIDTH+j]);
         }
+        printf("\n");
     }
     printf("\n");
     cudaFree(current_C);
