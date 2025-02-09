@@ -45,11 +45,11 @@ int main(){
 
     cudaMalloc((void**)&grid_C,sizeN);
     cudaMalloc((void**)&current_C,sizeN);
-
+    srand(time(NULL));
     for(int i=0;i<GRID_HEIGHT;i++){
         for (int j=0; j<GRID_WIDTH;j++){
-            grid[i*GRID_WIDTH+j] = 0;
-            current[i*GRID_WIDTH+j] = 0;
+            grid[i*GRID_WIDTH+j] = rand() % 2;
+            current[i*GRID_WIDTH+j] = grid[i*GRID_WIDTH+j];
         }
     }
     cudaMemcpy(grid_C,grid,sizeN,cudaMemcpyHostToDevice);
@@ -57,12 +57,16 @@ int main(){
 
     dim3 threadsPerBlock(16,16);
     dim3 numBlocks((GRID_WIDTH+threadsPerBlock.x-1)/threadsPerBlock.x,(GRID_WIDTH+threadsPerBlock.y-1)/threadsPerBlock.y);
-    conway_game_simple<<<numBlocks,threadsPerBlock>>>(current_C,grid_C);
-    cudaError_t cudErr = cudaGetLastError();
-    if (cudErr!=cudaSuccess){
-        printf("Cuda error: %s",cudErr)
+    int num_iterations = 10;
+    for(int i=0;i<num_iterations;i++){
+        
+        conway_game_simple<<<numBlocks,threadsPerBlock>>>(current_C,grid_C);
+        cudaError_t cudErr = cudaGetLastError();
+        if (cudErr!=cudaSuccess){
+            printf("Cuda error: %s",cudErr)
+        }
+        cudaDeviceSynchronize();
     }
-    cudaDeviceSynchronize();
 
     cudaMemcpy(grid,grid_C,sizeN,cudaMemcpyDeviceToHost);
     for(int i=0;i <10; i++){

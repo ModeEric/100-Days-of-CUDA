@@ -1,0 +1,1 @@
+Adding random initialization and time based. Will test on desktop 
